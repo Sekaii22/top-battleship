@@ -1,13 +1,15 @@
 class Ship {
+    name;
     length;
     hits = 0;
     sunk = false;
 
-    constructor(length=1) {
+    constructor(length=1, name="ship") {
         if (length < 1)
             length = 1;
 
         this.length = length;
+        this.name = name;
     }
 
     hit() {
@@ -25,32 +27,26 @@ class Ship {
 }
 
 class Gameboard {
-    // board size of 10 rows, 10 cols
-    board = [
-                Array(10), 
-                Array(10), 
-                Array(10), 
-                Array(10), 
-                Array(10), 
-                Array(10), 
-                Array(10), 
-                Array(10), 
-                Array(10), 
-                Array(10)
-            ];
+    // board size is 9 x 9
+    board = {};             // {"row,col": ship obj}
     ships = [];
     striked = [];           // coors where attacks received correctly striked ships
     missed = [];            // coors where attacks missed
     noOfShipsSunk = 0;
+    allShipsDestroyed = false;
 
     checkValidPlacement(coors) {
-        for (let [x, y] of coors) {
+        for (let coorStr of coors) {
+            const coorArr = coorStr.split(",");
+            const row = coorArr[0];
+            const col = coorArr[1];
+
             // check if coordinates outside of board
-            if (x < 0 || x > 9 || y < 0 || y > 9) {
+            if (row < 0 || row > 9 || col < 0 || col > 9) {
                 return false;
             }
             // check if cell alr occupied
-            else if (this.board[x][y] != null) {
+            else if (this.board[coorStr] != null) {
                 return false;
             }
         }
@@ -58,7 +54,7 @@ class Gameboard {
         return true;
     }
 
-    placeShip(length=1, [x, y], orientation="h") {
+    placeShip(length, [row, col], orientation="h", name) {
         if (!["h", "v"].includes(orientation)) {
             orientation = "h";
         }
@@ -66,10 +62,10 @@ class Gameboard {
         let coors = Array(length);
         for (let i = 0; i < length; i++) {
             if (orientation === "h") {
-                coors[i] = [x+i, y];
+                coors[i] = String([row, col+i]);
             }
             else {
-                coors[i] = [x, y+i];
+                coors[i] = String([row+i, col]);
             }
         }
 
@@ -77,17 +73,22 @@ class Gameboard {
             return null;
         };
 
-        const ship = new Ship(length);
-        for (let [x, y] of coors) {
-            this.board[x][y] = ship;
+        const ship = new Ship(length, name);
+        for (let coorStr of coors) {
+            this.board[coorStr] = ship;
         }
         this.ships.push(ship);
 
         return ship;
     }
 
-    receiveAttack([x, y]) {
-        const ship = this.board[x][y];
+    // 0 if missed, 1 if hit, null if invalid
+    receiveAttack([row, col]) {
+        const coorStr = String([row, col]);
+        const ship = this.board[coorStr];
+
+        if (this.striked.includes(coorStr) || this.missed.includes(coorStr))
+            return null
 
         if (ship != null) {
             ship.hit();
@@ -96,30 +97,27 @@ class Gameboard {
                 this.noOfShipsSunk += 1;
             
             if (this.noOfShipsSunk === this.ships.length)
-                this.#report();
+                this.allShipsDestroyed = true;
             
-            this.striked.push(String(x) + String(y));
+            this.striked.push(coorStr);
+            return 1;
         }
         else {
-            this.missed.push(String(x) + String(y));
+            this.missed.push(coorStr);
+            return 0;
         }
-    }
-
-    #report() {
-        console.log("All friendly ships sunk!");
     }
 }
 
 class Player {
+    name;
     gameboard = new Gameboard();
+    isComputer;
+
+    constructor(name, isComputer=false) {
+        this.name = name;
+        this.isComputer = isComputer;
+    }
 }
 
-class RealPlayer extends Player {
-
-}
-
-class ComputerPlayer extends Player {
-
-}
-
-export { Ship, Gameboard, RealPlayer, ComputerPlayer };
+export { Ship, Gameboard, Player };

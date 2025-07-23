@@ -1,4 +1,4 @@
-import { Ship, Gameboard, RealPlayer, ComputerPlayer } from "../src/battleship";
+import { Ship, Gameboard, Player } from "../src/battleship";
 
 describe("Ship", () => {
     test("hit()", () => {
@@ -32,21 +32,21 @@ describe("Gameboard", () => {
         const gameboard = new Gameboard();
         const ship = gameboard.placeShip(2, [0, 0]);
 
-        expect(gameboard.board[0][0]).toBe(ship);
-        expect(gameboard.board[1][0]).toBe(ship);
+        expect(gameboard.board["0,0"]).toBe(ship);
+        expect(gameboard.board["0,1"]).toBe(ship);
     });
 
     test("placeShip(): Place ship of length 2 vertically starting at (0,0) and ending at (1,0)", () => {
         const gameboard = new Gameboard();
         const ship = gameboard.placeShip(2, [0, 0], "v");
 
-        expect(gameboard.board[0][0]).toBe(ship);
-        expect(gameboard.board[0][1]).toBe(ship);
+        expect(gameboard.board["0,0"]).toBe(ship);
+        expect(gameboard.board["1,0"]).toBe(ship);
     });
 
     test("placeShip(): Placing a ship on cell already occupied by another ship should not be allowed", () => {
         const gameboard = new Gameboard();
-        gameboard.placeShip(2, [0,0]);
+        gameboard.placeShip(2, [0, 0]);
         const ship = gameboard.placeShip(2, [0, 0]);
 
         expect(ship).toBeNull();
@@ -54,7 +54,7 @@ describe("Gameboard", () => {
 
     test("placeShip(): Placing a ship outside board should not be allowed", () => {
         const gameboard = new Gameboard();
-        const ship = gameboard.placeShip(2, [9, 0]);
+        const ship = gameboard.placeShip(2, [0, 9]);
 
         expect(ship).toBeNull();
     });
@@ -62,17 +62,21 @@ describe("Gameboard", () => {
     test("receiveAttack()", () => {
         const gameboard = new Gameboard();
         const ship = gameboard.placeShip(2, [0, 0]);
+        
         gameboard.receiveAttack([0, 0]);
-
         expect(ship.hits).toBe(1);
-        expect(gameboard.striked).toEqual(["00"]);
+        expect(gameboard.striked).toEqual(["0,0"]);
+
+        gameboard.receiveAttack([0, 1]);
+        expect(ship.hits).toBe(2);
+        expect(gameboard.striked).toEqual(["0,0", "0,1"]);
     });
     
     test("receiveAttack(): sink a ship", () => {
         const gameboard = new Gameboard();
         const ship = gameboard.placeShip(2, [0, 0]);
         gameboard.receiveAttack([0, 0]);
-        gameboard.receiveAttack([1, 0]);
+        gameboard.receiveAttack([0, 1]);
         
         expect(ship.hits).toBe(2);
         expect(ship.sunk).toBe(true);
@@ -85,16 +89,24 @@ describe("Gameboard", () => {
         gameboard.receiveAttack([9, 9]);
         
         expect(ship.hits).toBe(0);
-        expect(gameboard.missed).toEqual(["99"]);
+        expect(gameboard.missed).toEqual(["9,9"]);
+    });
+
+    test("receiveAttack(): attacking area that had already been attacked before should not be allow", () => {
+        const gameboard = new Gameboard();
+        gameboard.placeShip(2, [0, 0]);
+        const attackResult1 = gameboard.receiveAttack([9, 9]);
+        const attackResult2 = gameboard.receiveAttack([9, 9]);
+        
+        expect(attackResult1).toBe(0);
+        expect(attackResult2).toBeNull();
     });
 });
 
 describe("Player", () => {
-    test("RealPlayer and ComputerPlayer contains a gameboard object", () => {
-        const realPlayer = new RealPlayer();
-        const computerPlayer = new ComputerPlayer();
+    test("Player object contains a gameboard object", () => {
+        const player = new Player();
         
-        expect(realPlayer.gameboard).not.toBeNull();
-        expect(computerPlayer.gameboard).not.toBeNull();
+        expect(player.gameboard).not.toBeNull();
     });
 });
