@@ -109,15 +109,4 @@ class Gameboard {
     }
 }
 
-class Player {
-    name;
-    gameboard = new Gameboard();
-    isComputer;
-
-    constructor(name, isComputer=false) {
-        this.name = name;
-        this.isComputer = isComputer;
-    }
-}
-
-export { Ship, Gameboard, Player };
+export { Ship, Gameboard };

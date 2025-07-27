@@ -1,4 +1,4 @@
-import { Ship, Gameboard, Player } from "../src/battleship";
+import { Ship, Gameboard } from "../src/battleship";
 
 describe("Ship", () => {
     test("hit()", () => {
@@ -100,13 +100,5 @@ describe("Gameboard", () => {
         
         expect(attackResult1).toBe(0);
         expect(attackResult2).toBeNull();
-    });
-});
-
-describe("Player", () => {
-    test("Player object contains a gameboard object", () => {
-        const player = new Player();
-        
-        expect(player.gameboard).not.toBeNull();
     });
 });
