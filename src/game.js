@@ -7,9 +7,9 @@ class Game {
     turn = 0;
     gameOver = false;
 
-    constructor(p1Name, p2Name, p1ShipDetails=[], p2ShipDetails=[], ai=true) {
+    constructor(p1Name, p2Name, p1ShipDetails=[], p2ShipDetails=[]) {
         this.player1 = new Player(p1Name);
-        this.player2 = new Player(p2Name, ai);
+        this.player2 = new Player(p2Name, true);
 
         for (let detail of p1ShipDetails) {
             this.player1.gameboard.placeShip(detail.length, detail.coor, detail.orientation, detail.name);
@@ -27,16 +27,16 @@ class Game {
         let result;
         if (this.whoseTurnIsIt() === 1) {
             console.log(`P1 attacks ${coor}`);
-            result = this.player2.gameboard.receiveAttack(coor);
+            result = this.player1.attack(this.player2, coor);
         } 
         else {
             console.log(`P2 attacks ${coor}`);
-            result = this.player1.gameboard.receiveAttack(coor);
+            result = this.player2.attack(this.player1, coor);
         }
         
         // invalid attack
         if (result === null)
-            return null;
+            return result;
 
         this.checkGameOver();
         this.turn += 1;

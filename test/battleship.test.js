@@ -71,12 +71,32 @@ describe("Gameboard", () => {
         expect(ship.hits).toBe(2);
         expect(gameboard.striked).toEqual(["0,0", "0,1"]);
     });
+
+    test("receiveAttack(): coordinate to strike not within board range", () => {
+        const gameboard = new Gameboard();
+        const ship = gameboard.placeShip(2, [0, 0]);
+        
+        let result = gameboard.receiveAttack([10, 0]);
+        expect(result).toBeNull();
+
+        result = gameboard.receiveAttack([-1, 0]);
+        expect(result).toBeNull();
+
+        result = gameboard.receiveAttack([0, 10]);
+        expect(result).toBeNull();
+
+        result = gameboard.receiveAttack([0, -1]);
+        expect(result).toBeNull();
+    });
     
     test("receiveAttack(): sink a ship", () => {
         const gameboard = new Gameboard();
         const ship = gameboard.placeShip(2, [0, 0]);
-        gameboard.receiveAttack([0, 0]);
-        gameboard.receiveAttack([0, 1]);
+        
+        let result = gameboard.receiveAttack([0, 0]);
+        expect(result).toBe(1);
+        result = gameboard.receiveAttack([0, 1]);
+        expect(result).toBe(2);
         
         expect(ship.hits).toBe(2);
         expect(ship.sunk).toBe(true);

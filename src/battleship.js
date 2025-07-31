@@ -15,11 +15,11 @@ class Ship {
     hit() {
         if (!this.sunk) {
             this.hits += 1;
-            this.#isSunk();
+            this.#checkSunk();
         }
     }
 
-    #isSunk() {
+    #checkSunk() {
         if (this.hits === this.length) {
             this.sunk = true;
         }
@@ -82,12 +82,16 @@ class Gameboard {
         return ship;
     }
 
-    // 0 if missed, 1 if hit, null if invalid
+    // 0 if missed, 1 if hit, 2 if ship sunk from hit, null if invalid
     receiveAttack([row, col]) {
         const coorStr = String([row, col]);
         const ship = this.board[coorStr];
 
-        if (this.striked.includes(coorStr) || this.missed.includes(coorStr))
+        if (
+            this.striked.includes(coorStr) || 
+            this.missed.includes(coorStr) ||
+            (row < 0 || row > 9 || col < 0 || col > 9)
+        )
             return null
 
         if (ship != null) {
@@ -100,7 +104,7 @@ class Gameboard {
                 this.allShipsDestroyed = true;
             
             this.striked.push(coorStr);
-            return 1;
+            return ship.sunk ? 2 : 1;
         }
         else {
             this.missed.push(coorStr);
