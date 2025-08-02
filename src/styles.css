@@ -71,8 +71,50 @@ label {
     padding: 20px 15px;
 }
 
+/* ship placement */
+.block {
+    display: block;
+}
+
+.ship-btn {
+    width: 100%;
+    color: #222;
+    border-radius: 5px;
+    border: none;
+    font-size: 1.3rem;
+    padding: 9px 50px;
+    margin-bottom: 10px;
+}
+
+.orientation-btn {
+    flex: 1;
+    color: #222;
+    border-radius: 5px;
+    border: none;
+    font-size: 1.1rem;
+    padding: 9px;
+}
+
+.orientation-btn-group {
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+.start-battle-btn {
+    width: 100%;
+    color: #222;
+    border-radius: 5px;
+    border: none;
+    font-size: 1.3rem;
+    padding: 9px 50px;
+}
+
+.disable-cursor {
+    cursor: not-allowed;
+}
+
 /* game */
-#turn-indicator {
+#game-status {
     font-size: 3rem;
     text-align: center;
     padding: 16px;
@@ -110,6 +152,10 @@ label {
     background-color: darkgray;
 }
 
+.cell-highlight {
+    background-color: rgba(169, 169, 169, 0.5);
+}
+
 .cell-hit {
     background-color: red;
 }
@@ -118,9 +164,13 @@ label {
     background-color: #444;
 }
 
-.game-wrapper {
-    display: flex;
+.game-wrapper,
+.placement-wrapper {
     gap: 50px;
+}
+
+.flex-wrapper {
+    display: flex;
 }
 
 .name-heading {

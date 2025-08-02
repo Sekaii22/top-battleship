@@ -1,6 +1,6 @@
 import "./styles.css";
 import { Game } from "./game";
-import { createGameUI } from "./game-ui";
+import { createGameUI, createShipPlacementUI, removeContent } from "./game-ui";
 
 const content = document.querySelector(".content");
 
@@ -33,7 +33,35 @@ let enemyShipDetails = [
 ]
 
 let game = new Game(playerName, enemyName, playerShipDetails, enemyShipDetails);
-let gameContainer = createGameUI(game);
-content.appendChild(gameContainer);
+const gameContainer = createGameUI(game);
+
+const ships = [
+        {
+            name: "Carrier",
+            length: 5,
+        },
+        {
+            name: "Battleship",
+            length: 4,
+        },
+        {
+            name: "Destroyer",
+            length: 3,
+        },
+        {
+            name: "Submarine",
+            length: 3,
+        },
+        {
+            name: "Patrol Boat",
+            length: 2,
+        },
+    ]
+
+const shipPlacementContainer = createShipPlacementUI(ships); 
+
+removeContent()
+// content.appendChild(gameContainer);
+content.appendChild(shipPlacementContainer);
 
 
