@@ -183,11 +183,9 @@ function createShowBoard() {
             (orient === "v" && row + length - 1 > 9)) {
             boardDiv.classList.add("disable-cursor");
             return;
-        } 
-        else {
-            boardDiv.classList.remove("disable-cursor");
         }
-
+        
+        const selectedCells = [];
         for (let i = 0; i < length; i++) {
             let nextRow;
             let nextCol;
@@ -202,8 +200,20 @@ function createShowBoard() {
             }
 
             const cell = boardDiv.querySelector(`.cell[data-row="${nextRow}"][data-col="${nextCol}"]`);
-            cell.classList.add("cell-highlight");
+            selectedCells.push(cell);
+
+            // if length of ship is overlapping already occupied cells
+            if (cell.classList.contains("cell-selected")) {
+                boardDiv.classList.add("disable-cursor");
+                return;
+            }
         }
+
+        boardDiv.classList.remove("disable-cursor");
+
+        selectedCells.forEach((cell) => {
+            cell.classList.add("cell-highlight");
+        })
     });
 
     boardDiv.addEventListener("mouseout", (e) => {
@@ -220,7 +230,42 @@ function createShowBoard() {
         if (e.target === boardDiv)
             return;
 
-        // ...
+        if (boardDiv.classList.contains("disable-cursor"))
+            return;
+
+        const selectedShipBtn = document.querySelector(".ship-btn.selected");
+        const selectedOrientationBtn = document.querySelector(".orientation-btn.selected");
+
+        if (!selectedShipBtn)
+            return;
+
+        const length = Number(selectedShipBtn.dataset.length);
+        const orient = selectedOrientationBtn.dataset.orientation;
+        const row = Number(e.target.dataset.row);
+        const col = Number(e.target.dataset.col);
+
+        for (let i = 0; i < length; i++) {
+            let nextRow;
+            let nextCol;
+
+            if (orient === "h") {
+                nextRow = row;
+                nextCol = col + i;
+            }
+            else {
+                nextRow = row + i;
+                nextCol = col;
+            }
+
+            const cell = boardDiv.querySelector(`.cell[data-row="${nextRow}"][data-col="${nextCol}"]`);
+            cell.classList.add("cell-selected");
+        }
+
+        // remove highlight
+        const highlightedCells = [...boardDiv.querySelectorAll(".cell.cell-highlight")];
+        highlightedCells.forEach((cell) => {
+            cell.classList.remove("cell-highlight");
+        });
     });
 
     return boardDiv

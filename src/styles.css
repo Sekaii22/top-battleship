@@ -156,6 +156,10 @@ label {
     background-color: rgba(169, 169, 169, 0.5);
 }
 
+.cell-selected {
+    background-color: darkgreen;
+}
+
 .cell-hit {
     background-color: red;
 }
