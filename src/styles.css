@@ -47,18 +47,28 @@ label {
 }
 
 #player-name {
+    color: black;
     padding: 8px 10px;
     font-size: 1.1rem;
     border-radius: 5px;
 }
 
+#player-name:invalid {
+    outline: 2px solid red;
+}
+
 .text-btn {
     padding: 9px 15px;
     font-size: 1.1rem;
+    transition: filter 0.08s;
 }
 
 .text-btn:hover {
     scale: 1.02;
+}
+
+.text-btn:active {
+    filter: opacity(0.5);
 }
 
 #start-btn {

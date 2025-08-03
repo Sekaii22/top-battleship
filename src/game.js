@@ -10,7 +10,10 @@ class Game {
     constructor(p1Name, p2Name, p1ShipDetails=[], p2ShipDetails=[]) {
         this.player1 = new Player(p1Name);
         this.player2 = new Player(p2Name, true);
+        this.#setupBoards(p1ShipDetails, p2ShipDetails);
+    }
 
+    #setupBoards(p1ShipDetails=[], p2ShipDetails=[]) {
         // place ships for player 1
         for (let detail of p1ShipDetails) {
             this.player1.gameboard.placeShip(detail.length, detail.coor, detail.orientation, detail.name);

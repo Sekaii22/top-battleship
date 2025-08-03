@@ -25,11 +25,53 @@ const shipList = [
 ];
 
 function createStartPage() {
+    const page = document.createElement("div");
+    
+    const startForm = document.createElement("form");
+    startForm.classList.add("start-form");
 
+    const nameLabel = document.createElement("label");
+    nameLabel.textContent = "Player Name:";
+    nameLabel.setAttribute("for", "player-name");
+
+    const nameInput = document.createElement("input");
+    nameInput.id = "player-name";
+    nameInput.type = "text";
+    nameInput.placeholder = "Name";
+    nameInput.required = true;
+
+    const startBtn = document.createElement("button");
+    startBtn.id = "start-btn";
+    startBtn.classList.add("text-btn")
+    startBtn.textContent = "Start Game";
+    
+    startBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        if (!startForm.checkValidity())
+            return;
+
+        const name = nameInput.value;
+
+        // remove start page
+        removeContent();
+
+        // switch to ship placement page
+        const content = document.querySelector(".content");
+        const shipPlacementPage = createShipPlacementPage(name);
+        content.appendChild(shipPlacementPage);
+    });
+
+    startForm.appendChild(nameLabel);
+    startForm.appendChild(nameInput);
+    startForm.appendChild(startBtn);
+
+    page.appendChild(startForm);
+    return page
 }
 
-function createShipPlacementPage() {
-    const uiContainer = document.createElement("div");
+function createShipPlacementPage(playerName) {
+    const page = document.createElement("div");
 
     const statusIndicator = createStatusIndicator();
     statusIndicator.textContent = "Place your ships!";
@@ -98,7 +140,9 @@ function createShipPlacementPage() {
     startBattleBtn.classList.add("start-battle-btn");
     startBattleBtn.textContent = "Start Battle";
 
-    startBattleBtn.addEventListener("click", startBattleHandler);
+    startBattleBtn.addEventListener("click", () => {
+        startBattleHandler(playerName);
+    });
 
     buttonGroup.appendChild(startBattleBtn);
     
@@ -108,15 +152,13 @@ function createShipPlacementPage() {
     placementWrapper.appendChild(showBoard);
     placementWrapper.appendChild(buttonGroup);
 
-    uiContainer.appendChild(statusIndicator);
-    uiContainer.appendChild(placementWrapper);
+    page.appendChild(statusIndicator);
+    page.appendChild(placementWrapper);
 
-    return uiContainer;
+    return page;
 }
 
-function startBattleHandler() {
-    const content = document.querySelector(".content");
-    // const placementBoard = document.querySelector(".placement-board");
+function startBattleHandler(playerName) {
     const placedShipCells = [...document.querySelectorAll(`.cell-selected[data-section="${0}"]`)];
     
     if (placedShipCells.length !== shipList.length) {
@@ -125,7 +167,6 @@ function startBattleHandler() {
     }
 
     // get player's info
-    const playerName = "You";
     const playerShipDetails = [];
 
     placedShipCells.forEach((cell) => {
@@ -141,15 +182,13 @@ function startBattleHandler() {
             orientation
         });
     });
-
-    // get computer's info
-    const enemyName = "Computer";
     
     // remove ship placement page
     removeContent()
     
     // start game
-    const game = new Game(playerName, enemyName, playerShipDetails);
+    const content = document.querySelector(".content");
+    const game = new Game(playerName, "Computer", playerShipDetails);
     const gameContainer = createGamePage(game);
     content.appendChild(gameContainer);
 }
@@ -158,7 +197,7 @@ function createGamePage(game) {
     // set current game info for game-ui.js
     setCurrentGame(game);
 
-    const uiContainer = document.createElement("div");
+    const page = document.createElement("div");
 
     const statusIndicator = createStatusIndicator();
     statusIndicator.textContent = "Your turn!";
@@ -193,10 +232,10 @@ function createGamePage(game) {
     gameWrapper.appendChild(playerBoardWrapper);
     gameWrapper.appendChild(enemyBoardWrapper);
 
-    uiContainer.appendChild(statusIndicator);
-    uiContainer.appendChild(gameWrapper);
+    page.appendChild(statusIndicator);
+    page.appendChild(gameWrapper);
 
-    return uiContainer;
+    return page;
 }
 
-export { createStartPage, createShipPlacementPage, createGamePage }
+export { createStartPage }
