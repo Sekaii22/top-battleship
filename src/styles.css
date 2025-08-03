@@ -83,7 +83,16 @@ label {
     border: none;
     font-size: 1.3rem;
     padding: 9px 50px;
-    margin-bottom: 10px;
+    margin-bottom: 14px;
+}
+
+.selected {
+    outline: 3px solid lightgreen;
+}
+
+.used {
+    filter: opacity(0.2);
+    pointer-events: none;
 }
 
 .orientation-btn {

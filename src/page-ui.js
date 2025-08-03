@@ -36,7 +36,7 @@ function createShipPlacementPage() {
 
     const showBoard = createPlacementBoard();
     
-    // btns to select ships for placement
+    // create btns for selecting ship type
     const buttonGroup = document.createElement("div");
     buttonGroup.classList.add("btn-group");
 
@@ -60,7 +60,7 @@ function createShipPlacementPage() {
         buttonGroup.appendChild(btn);
     })
 
-    // btns for selecting orientation
+    // create btns for selecting orientation
     const orientationBtnGroup = document.createElement("div");
     orientationBtnGroup.classList.add("flex-wrapper", "orientation-btn-group");
 
@@ -102,7 +102,7 @@ function createShipPlacementPage() {
 
     buttonGroup.appendChild(startBattleBtn);
     
-    // Put btn group and showboard side by side
+    // put btn group and showboard side by side
     const placementWrapper = document.createElement("div");
     placementWrapper.classList.add("flex-wrapper", "placement-wrapper");
     placementWrapper.appendChild(showBoard);
@@ -124,7 +124,7 @@ function startBattleHandler() {
         return;
     }
 
-    // player's info
+    // get player's info
     const playerName = "You";
     const playerShipDetails = [];
 
@@ -142,19 +142,20 @@ function startBattleHandler() {
         });
     });
 
-    // computer's info
+    // get computer's info
     const enemyName = "Computer";
     
+    // remove ship placement page
     removeContent()
-
+    
+    // start game
     const game = new Game(playerName, enemyName, playerShipDetails);
     const gameContainer = createGamePage(game);
-
     content.appendChild(gameContainer);
 }
 
 function createGamePage(game) {
-    // set current game
+    // set current game info for game-ui.js
     setCurrentGame(game);
 
     const uiContainer = document.createElement("div");
@@ -170,7 +171,7 @@ function createGamePage(game) {
     const gameWrapper = document.createElement("div");
     gameWrapper.classList.add("flex-wrapper", "game-wrapper");
 
-    // Group a name header with the Player's board
+    // Group player name header with the Player's board
     const playerBoardWrapper = document.createElement("div");
     const playerNameHeader = document.createElement("h2");
     playerNameHeader.classList.add("name-heading");
@@ -179,7 +180,7 @@ function createGamePage(game) {
     playerBoardWrapper.appendChild(playerNameHeader);
     playerBoardWrapper.appendChild(playerBoardDiv);
 
-    // Group a name header with the enemy's board
+    // Group enemy name header with the enemy's board
     const enemyBoardWrapper = document.createElement("div");
     const enemyNameHeader = document.createElement("h2");
     enemyNameHeader.classList.add("name-heading");

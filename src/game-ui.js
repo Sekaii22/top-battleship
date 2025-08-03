@@ -125,6 +125,7 @@ function createPlacementBoard() {
         if (e.target === boardDiv)
             return;
 
+        // get the selected ship and orientation information from their btns
         const selectedShipBtn = document.querySelector(".ship-btn.selected");
         const selectedOrientationBtn = document.querySelector(".orientation-btn.selected");
 
@@ -187,10 +188,10 @@ function createPlacementBoard() {
     boardDiv.addEventListener("click", (e) => {
         if (e.target === boardDiv)
             return;
-
-        if (boardDiv.classList.contains("disable-cursor"))
+        else if (boardDiv.classList.contains("disable-cursor"))
             return;
 
+        // get the selected ship and orientation information from their btns
         const selectedShipBtn = document.querySelector(".ship-btn.selected");
         const selectedOrientationBtn = document.querySelector(".orientation-btn.selected");
 
@@ -230,6 +231,10 @@ function createPlacementBoard() {
         highlightedCells.forEach((cell) => {
             cell.classList.remove("cell-highlight");
         });
+
+        // remove selected ship btn styling
+        selectedShipBtn.classList.remove("disable", "half-opacity", "selected");
+        selectedShipBtn.classList.add("used");
     });
 
     return boardDiv
