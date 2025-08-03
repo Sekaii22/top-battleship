@@ -1,10 +1,12 @@
 import { wait } from "./misc";
-import { Game } from "./game";
 
 let currentGame;
-let statusIndicator;
-let playerBoardUI;
-let enemyBoardUI;
+
+function setCurrentGame(game) {
+    currentGame = game;
+    console.log("game-ui")
+    console.log(currentGame)
+}
 
 function createPlayBoard(board, isPlayer=true) {
     const boardDiv = document.createElement("div");
@@ -12,7 +14,7 @@ function createPlayBoard(board, isPlayer=true) {
     if (isPlayer) {
         boardDiv.classList.add("half-opacity", "disable");
     }
-
+    
     for(let row = 0; row < 10; row++) {
         for(let col = 0; col < 10; col++) {
             const cell = document.createElement("div");
@@ -29,7 +31,7 @@ function createPlayBoard(board, isPlayer=true) {
                 cell.classList.add("cell-occupied");
             }
 
-            cell.addEventListener("click", takeTurn);
+            cell.addEventListener("click", takeTurnHandler);
         }
     }
 
@@ -43,11 +45,12 @@ function createStatusIndicator() {
     return statusIndicator;
 }
 
-function takeTurn(e) {
+function takeTurnHandler(e) {
     const cell = e.currentTarget;
     const row = cell.dataset.row;
     const col = cell.dataset.col;
     
+    console.log(currentGame);
     const turnResult = currentGame.takeTurn([row, col]);
     
     if (turnResult === 1 || turnResult === 2)
@@ -58,7 +61,6 @@ function takeTurn(e) {
         return;
 
     if (!currentGame.gameOver)
-        //change turn
         changeTurn();
     else
         showWinnerVisualUI();
@@ -72,85 +74,44 @@ async function changeTurn() {
     toggleBoardTurnVisualUI(whichPlayer);
 
     if (whichPlayer === 2) {
-        // wait 2 seconds before letting computer move to simulate "thinking"
-        await wait(2000);
+        // wait 1 seconds before letting computer move to simulate "thinking"
+        await wait(1000);
 
-        // Choose a random cell > dispatch click event on cell > trigger takeTurn()
+        // Get computer's next move > dispatch click event that board cell > triggers takeTurn()
         const [row, col] = currentGame.player2.generateNextMove();
-        const cell = playerBoardUI.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+        const playerBoardDiv = document.querySelector(".player-board");
+        const cell = playerBoardDiv.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
         cell.dispatchEvent(new MouseEvent("click"));
     }
 }
 
 function toggleBoardTurnVisualUI(whichPlayer) {
+    const statusIndicator = document.querySelector("#game-status");
+    const playerBoardDiv = document.querySelector(".player-board");
+    const enemyBoardDiv = document.querySelector(".enemy-board");
+
     if (whichPlayer === 1) {
-        playerBoardUI.classList.add("half-opacity");
-        enemyBoardUI.classList.remove("half-opacity", "disable");
+        playerBoardDiv.classList.add("half-opacity");
+        enemyBoardDiv.classList.remove("half-opacity", "disable");
         statusIndicator.textContent = "Your turn!";
     }
     else {
-        enemyBoardUI.classList.add("half-opacity", "disable");
-        playerBoardUI.classList.remove("half-opacity");
+        enemyBoardDiv.classList.add("half-opacity", "disable");
+        playerBoardDiv.classList.remove("half-opacity");
         statusIndicator.textContent = "Enemy's turn!";
     }   
 }
 
 function showWinnerVisualUI() {
+    const statusIndicator = document.querySelector("#game-status");
+
     const winner = currentGame.winner;
     statusIndicator.textContent = `Winner is ${winner.name}!`;
 }
 
-// Needs to be called first before any other functions
-function createGameUI(game) {
-    // set current game
-    currentGame = game;
-
-    const uiContainer = document.createElement("div");
-
-    statusIndicator = createStatusIndicator();
-    statusIndicator.textContent = "Your turn!";
-    
-    playerBoardUI = createPlayBoard(game.player1.gameboard);
-    enemyBoardUI = createPlayBoard(game.player2.gameboard, false);
-
-    const gameWrapper = document.createElement("div");
-    gameWrapper.classList.add("flex-wrapper", "game-wrapper");
-
-    // Group a name header with the Player's board
-    const playerBoardWrapper = document.createElement("div");
-    const playerNameHeader = document.createElement("h2");
-    playerNameHeader.classList.add("name-heading");
-    playerNameHeader.textContent = game.player1.name;
-
-    playerBoardWrapper.appendChild(playerNameHeader);
-    playerBoardWrapper.appendChild(playerBoardUI);
-
-    // Group a name header with the enemy's board
-    const enemyBoardWrapper = document.createElement("div");
-    const enemyNameHeader = document.createElement("h2");
-    enemyNameHeader.classList.add("name-heading");
-    enemyNameHeader.textContent = game.player2.name;
-
-    enemyBoardWrapper.appendChild(enemyNameHeader);
-    enemyBoardWrapper.appendChild(enemyBoardUI);
-
-    // Put their gameboards side by side
-    gameWrapper.appendChild(playerBoardWrapper);
-    gameWrapper.appendChild(enemyBoardWrapper);
-
-    uiContainer.appendChild(statusIndicator);
-    uiContainer.appendChild(gameWrapper);
-
-    return uiContainer;
-}
-
-function createStartUI() {
-
-}
-
-function createShowBoard() {
+function createPlacementBoard() {
     const boardDiv = document.createElement("div");
-    boardDiv.classList.add("board");
+    boardDiv.classList.add("board", "placement-board");
 
     for(let row = 0; row < 10; row++) {
         for(let col = 0; col < 10; col++) {
@@ -239,6 +200,7 @@ function createShowBoard() {
         if (!selectedShipBtn)
             return;
 
+        const name = selectedShipBtn.textContent;
         const length = Number(selectedShipBtn.dataset.length);
         const orient = selectedOrientationBtn.dataset.orientation;
         const row = Number(e.target.dataset.row);
@@ -258,7 +220,11 @@ function createShowBoard() {
             }
 
             const cell = boardDiv.querySelector(`.cell[data-row="${nextRow}"][data-col="${nextCol}"]`);
+
             cell.classList.add("cell-selected");
+            cell.dataset.shipName = name;
+            cell.dataset.section = i;
+            cell.dataset.orientation = orient;
         }
 
         // remove highlight
@@ -269,131 +235,6 @@ function createShowBoard() {
     });
 
     return boardDiv
-}
-
-// ships = [{name, length}, ...]
-function createShipPlacementUI(ships) {
-    const uiContainer = document.createElement("div");
-
-    statusIndicator = createStatusIndicator();
-    statusIndicator.textContent = "Place your ships!";
-
-    const showBoard = createShowBoard();
-    
-    // btns to select ships for placement
-    const buttonGroup = document.createElement("div");
-    buttonGroup.classList.add("btn-group");
-
-    ships.forEach((ship) => {
-        const btn = document.createElement("button");
-        
-        btn.dataset.length = ship.length;
-        btn.dataset.name = ship.name;
-        btn.textContent = ship.name;
-        btn.classList.add("block", "ship-btn");
-
-        btn.addEventListener("click", () => {
-            const btns = [...buttonGroup.querySelectorAll(".ship-btn")];
-            btns.forEach((b) => {
-                b.classList.remove("disable", "half-opacity", "selected");
-            })
-
-            btn.classList.add("disable", "half-opacity", "selected");
-        })
-
-        buttonGroup.appendChild(btn);
-    })
-
-    // btns for selecting ship placement orientation
-    const orientationBtnGroup = document.createElement("div");
-    orientationBtnGroup.classList.add("flex-wrapper", "orientation-btn-group");
-
-    const horizontalPlacementBtn = document.createElement("button");
-    const verticalPlacementBtn = document.createElement("button");
-
-    horizontalPlacementBtn.classList.add("orientation-btn");
-    horizontalPlacementBtn.textContent = "Horizontal";
-    horizontalPlacementBtn.dataset.orientation = "h";
-    horizontalPlacementBtn.classList.add("disable", "half-opacity", "selected");
-
-    verticalPlacementBtn.classList.add("orientation-btn");
-    verticalPlacementBtn.textContent = "Vertical";
-    verticalPlacementBtn.dataset.orientation = "v";
-
-    [horizontalPlacementBtn, verticalPlacementBtn].forEach((btn) => {
-        btn.addEventListener("click", () => {
-            const btns = [...buttonGroup.querySelectorAll(".orientation-btn")];
-
-            btns.forEach((b) => {
-                b.classList.remove("disable", "half-opacity", "selected");
-            })
-
-            btn.classList.add("disable", "half-opacity", "selected");
-        })
-    })
-
-    orientationBtnGroup.appendChild(horizontalPlacementBtn);
-    orientationBtnGroup.appendChild(verticalPlacementBtn);
-    buttonGroup.appendChild(orientationBtnGroup);
-
-    // game start btn
-    const startBattleBtn = document.createElement("button")
-    
-    startBattleBtn.classList.add("start-battle-btn");
-    startBattleBtn.textContent = "Start Battle";
-
-    startBattleBtn.addEventListener("click", startBattle);
-
-    buttonGroup.appendChild(startBattleBtn);
-    
-    // Put btn group and showboard side by side
-    const placementWrapper = document.createElement("div");
-    placementWrapper.classList.add("flex-wrapper", "placement-wrapper");
-    placementWrapper.appendChild(showBoard);
-    placementWrapper.appendChild(buttonGroup);
-
-    uiContainer.appendChild(statusIndicator);
-    uiContainer.appendChild(placementWrapper);
-
-    return uiContainer;
-}
-
-function startBattle() {
-    const content = document.querySelector(".content");
-    
-    // player's info
-    const playerName = "You";
-    let playerShipDetails = [
-        {
-            length: 2,
-            coor: [0, 0],
-        },
-        {
-            length: 2,
-            coor: [5, 0],
-        }
-    ]
-
-    // computer's info
-    const enemyName = "Computer";
-    let enemyShipDetails = [
-        {
-            length: 2,
-            coor: [0, 0],
-            orientation: "v",
-        },
-        {
-            length: 2,
-            coor: [5, 0],
-            orientation: "v",
-        }
-    ]
-
-    let game = new Game(playerName, enemyName, playerShipDetails, enemyShipDetails);
-    const gameContainer = createGameUI(game);
-
-    removeContent()
-    content.appendChild(gameContainer);
 }
 
 function removeContent() {
@@ -408,11 +249,6 @@ function removeContent() {
         return
 
     content.removeChild(child);
-
-    currentGame = null;
-    statusIndicator = null;
-    playerBoardUI = null;
-    enemyBoardUI = null;
 }
 
-export { createGameUI, createShipPlacementUI, removeContent };
+export { setCurrentGame, createPlayBoard, createPlacementBoard, createStatusIndicator, removeContent };
