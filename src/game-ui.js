@@ -4,8 +4,6 @@ let currentGame;
 
 function setCurrentGame(game) {
     currentGame = game;
-    console.log("game-ui")
-    console.log(currentGame)
 }
 
 function createPlayBoard(board, isPlayer=true) {
@@ -50,7 +48,6 @@ function takeTurnHandler(e) {
     const row = cell.dataset.row;
     const col = cell.dataset.col;
     
-    console.log(currentGame);
     const turnResult = currentGame.takeTurn([row, col]);
     
     if (turnResult === 1 || turnResult === 2)
@@ -80,8 +77,8 @@ async function changeTurn() {
         // Get computer's next move > dispatch click event that board cell > triggers takeTurn()
         const [row, col] = currentGame.player2.generateNextMove();
         const playerBoardDiv = document.querySelector(".player-board");
-        const cell = playerBoardDiv.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-        cell.dispatchEvent(new MouseEvent("click"));
+        const chosenCell = playerBoardDiv.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+        chosenCell.dispatchEvent(new MouseEvent("click"));
     }
 }
 
@@ -223,6 +220,7 @@ function createPlacementBoard() {
 
             cell.classList.add("cell-selected");
             cell.dataset.shipName = name;
+            cell.dataset.length = length;
             cell.dataset.section = i;
             cell.dataset.orientation = orient;
         }
@@ -240,15 +238,12 @@ function createPlacementBoard() {
 function removeContent() {
     const content = document.querySelector(".content");
 
-    if (!content)
-        return;
-
-    const child = content.firstElementChild;
-
-    if (!child)
-        return
-
-    content.removeChild(child);
+    if (content) {
+        const child = content.firstElementChild;
+    
+        if (child)
+            content.removeChild(child);
+    }
 }
 
 export { setCurrentGame, createPlayBoard, createPlacementBoard, createStatusIndicator, removeContent };

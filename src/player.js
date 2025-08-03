@@ -11,6 +11,7 @@ class Player {
         this.isAI = isAI;
     }
 
+    // player = Player obj, coor = [row:number, col:number]
     attack(player, coor) {
         if (this.moves.includes(String(coor)))
             return null;
@@ -37,6 +38,29 @@ class Player {
             }
 
             return [randRow, randCol];
+        }
+    }
+
+    // shipList = [{name:string, length:number}]
+    setupRandomShipPlacement(shipList) {
+        for (let ship of shipList) {
+            
+            // try to place ship randomly until sucessful
+            while (true) {
+                let randRow = Math.floor(Math.random() * 10);
+                let randCol = Math.floor(Math.random() * 10);
+                let randOrient = (Math.random() > 0.5) ? "h" : "v";
+
+                let placingResult = this.gameboard.placeShip(
+                    ship.length, 
+                    [randRow, randCol], 
+                    randOrient, 
+                    ship.name
+                );
+
+                if (placingResult != null)
+                    break;
+            }
         }
     }
 }

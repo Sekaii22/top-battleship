@@ -11,15 +11,25 @@ class Game {
         this.player1 = new Player(p1Name);
         this.player2 = new Player(p2Name, true);
 
+        // place ships for player 1
         for (let detail of p1ShipDetails) {
             this.player1.gameboard.placeShip(detail.length, detail.coor, detail.orientation, detail.name);
         }
 
-        for (let detail of p2ShipDetails) {
-            this.player2.gameboard.placeShip(detail.length, detail.coor, detail.orientation, detail.name);
+        // place ships for player 2
+        if (p2ShipDetails.length > 0) {
+            for (let detail of p2ShipDetails) {
+                this.player2.gameboard.placeShip(detail.length, detail.coor, detail.orientation, detail.name);
+            }
+        }
+        else {
+            // use the same ship length and name information as p1ShipDetails
+            // to place ships at random position for player 2
+            this.player2.setupRandomShipPlacement(p1ShipDetails);
         }
     }
 
+    // coor = [row:number, col:number]
     takeTurn(coor) {
         if (this.gameOver)
             return null;

@@ -116,50 +116,38 @@ function createShipPlacementPage() {
 
 function startBattleHandler() {
     const content = document.querySelector(".content");
-    const placementBoard = document.querySelector(".placement-board");
+    // const placementBoard = document.querySelector(".placement-board");
     const placedShipCells = [...document.querySelectorAll(`.cell-selected[data-section="${0}"]`)];
-
+    
     if (placedShipCells.length !== shipList.length) {
         alert("Place all your ships first before starting the game!");
         return;
     }
 
-    // placedShipCells.forEach((cell) => {
-    //     cell.style.backgroundColor = "blue";
-    // })
-    
     // player's info
     const playerName = "You";
-    const playerShipDetails = [
-        {
-            length: 2,
-            coor: [0, 0],
-        },
-        {
-            length: 2,
-            coor: [5, 0],
-        }
-    ]
-    
+    const playerShipDetails = [];
+
+    placedShipCells.forEach((cell) => {
+        const name = cell.dataset.shipName;
+        const length = Number(cell.dataset.length);
+        const coor = [Number(cell.dataset.row), Number(cell.dataset.col)];
+        const orientation = cell.dataset.orientation;
+
+        playerShipDetails.push({
+            name,
+            length,
+            coor,
+            orientation
+        });
+    });
 
     // computer's info
     const enemyName = "Computer";
-    let enemyShipDetails = [
-        {
-            length: 2,
-            coor: [0, 0],
-            orientation: "v",
-        },
-        {
-            length: 2,
-            coor: [5, 0],
-            orientation: "v",
-        }
-    ]
-
-    removeContent()
     
-    let game = new Game(playerName, enemyName, playerShipDetails, enemyShipDetails);
+    removeContent()
+
+    const game = new Game(playerName, enemyName, playerShipDetails);
     const gameContainer = createGamePage(game);
 
     content.appendChild(gameContainer);
@@ -210,4 +198,4 @@ function createGamePage(game) {
     return uiContainer;
 }
 
-export { createGamePage, createStartPage, createShipPlacementPage }
+export { createStartPage, createShipPlacementPage, createGamePage }

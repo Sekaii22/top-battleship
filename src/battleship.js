@@ -35,11 +35,12 @@ class Gameboard {
     noOfShipsSunk = 0;
     allShipsDestroyed = false;
 
-    checkValidPlacement(coors) {
+    // coors = ["row,col", ...]
+    #checkValidPlacement(coors) {
         for (let coorStr of coors) {
             const coorArr = coorStr.split(",");
-            const row = coorArr[0];
-            const col = coorArr[1];
+            const row = Number(coorArr[0]);
+            const col = Number(coorArr[1]);
 
             // check if coordinates outside of board
             if (row < 0 || row > 9 || col < 0 || col > 9) {
@@ -69,7 +70,7 @@ class Gameboard {
             }
         }
 
-        if(!this.checkValidPlacement(coors)) {
+        if(!this.#checkValidPlacement(coors)) {
             return null;
         };
 
