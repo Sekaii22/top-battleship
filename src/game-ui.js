@@ -36,13 +36,6 @@ function createPlayBoard(board, isPlayer=true) {
     return boardDiv
 }
 
-function createStatusIndicator() {
-    const statusIndicator = document.createElement("H1");
-    statusIndicator.id = "game-status";
-
-    return statusIndicator;
-}
-
 function takeTurnHandler(e) {
     const cell = e.currentTarget;
     const row = Number(cell.dataset.row);
@@ -80,6 +73,13 @@ async function changeTurn() {
     }
 }
 
+function createStatusIndicator() {
+    const statusIndicator = document.createElement("H1");
+    statusIndicator.id = "game-status";
+
+    return statusIndicator;
+}
+
 function toggleBoardTurnVisualUI(whichPlayer) {
     const statusIndicator = document.querySelector("#game-status");
     const playerBoardDiv = document.querySelector(".player-board");
@@ -98,10 +98,46 @@ function toggleBoardTurnVisualUI(whichPlayer) {
 }
 
 function showWinnerVisualUI() {
+    const dialog = document.querySelector("dialog");
     const statusIndicator = document.querySelector("#game-status");
 
     const winner = currentGame.winner;
     statusIndicator.textContent = `Winner is ${winner.name}!`;
+    
+    dialog.showModal();
+}
+
+function createEndDialog() {
+    const dialog = document.querySelector("dialog");
+    const dialogArea = document.createElement("div");
+    dialogArea.id = "dialog-area";
+
+    const dialogText = document.createElement("h3");
+    dialogText.classList.add("dialog-text");
+    dialogText.textContent = "Game over!";
+
+    // exit and retry buttons
+    const btnGroup = document.createElement("div");
+    btnGroup.classList.add("flex-wrapper", "flex-center");
+
+    const dialogExitBtn = document.createElement("button");
+    dialogExitBtn.id = "exit-btn";
+    dialogExitBtn.textContent = "Exit";
+
+    const retryBtn = document.createElement("button");
+    retryBtn.id = "retry-btn";
+    retryBtn.textContent = "Retry";
+
+    dialogExitBtn.addEventListener("click", () => {
+        dialog.close();
+    });
+
+    btnGroup.appendChild(dialogExitBtn);
+    btnGroup.appendChild(retryBtn);
+    dialogArea.appendChild(dialogText);
+    dialogArea.appendChild(btnGroup);
+
+    return dialogArea;
 }
 
 function createPlacementBoard() {
@@ -249,4 +285,11 @@ function removeContent() {
     }
 }
 
-export { setCurrentGame, createPlayBoard, createPlacementBoard, createStatusIndicator, removeContent };
+export { 
+    setCurrentGame, 
+    createPlayBoard, 
+    createPlacementBoard, 
+    createStatusIndicator,
+    createEndDialog, 
+    removeContent 
+};

@@ -1,5 +1,12 @@
-import { setCurrentGame, createPlayBoard, createPlacementBoard, createStatusIndicator, removeContent } from "./game-ui";
 import { Game } from "./game";
+import { 
+    setCurrentGame, 
+    createPlayBoard, 
+    createPlacementBoard, 
+    createStatusIndicator,
+    createEndDialog, 
+    removeContent 
+    } from "./game-ui";
 
 const shipList = [
     {
@@ -27,6 +34,7 @@ const shipList = [
 function createStartPage() {
     const page = document.createElement("div");
     
+    // creating start form
     const startForm = document.createElement("form");
     startForm.classList.add("start-form");
 
@@ -44,14 +52,31 @@ function createStartPage() {
     startBtn.id = "start-btn";
     startBtn.classList.add("text-btn")
     startBtn.textContent = "Start Game";
-    
-    startBtn.addEventListener("click", (e) => {
-        e.preventDefault();
 
+    startBtn.addEventListener("click", (e) => {
         if (!startForm.checkValidity())
             return;
-
+        
+        e.preventDefault();
         const name = nameInput.value;
+
+        // setup end dialog and retry btn
+        const dialog = document.querySelector("dialog");
+        const dialogArea = createEndDialog();
+        const retryBtn = dialogArea.querySelector("#retry-btn");
+
+        retryBtn.addEventListener("click", () => {
+            dialog.close();
+
+            // remove current content
+            removeContent();
+            
+            const content = document.querySelector(".content");
+            const shipPlacementPage = createShipPlacementPage(name);
+            content.appendChild(shipPlacementPage);
+        })
+
+        dialog.appendChild(dialogArea);
 
         // remove start page
         removeContent();

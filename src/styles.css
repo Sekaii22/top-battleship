@@ -1,4 +1,4 @@
-* {
+*:not(dialog) {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -24,8 +24,43 @@ main {
     text-align: center;
 }
 
-.content {
+/* game end dialog */
+dialog {
+	padding: 0;
+    border-radius: 10px;
+    border: none;
+    background-color: #EEE;
+}
 
+dialog::backdrop {
+  background-color: black;
+  opacity: 0.5;
+}
+
+#dialog-area {
+	padding: 20px;
+}
+
+.dialog-text {
+    font-size: 2rem;
+    color: black;
+    padding: 0 20px;
+    margin-bottom: 30px;
+}
+
+dialog button {
+    padding: 8px 18px;
+    color: black;
+    font-size: 1.1rem;
+    margin: 0 10px;
+}
+
+#retry-btn {
+
+}
+
+#exit-btn {
+    
 }
 
 /* start form */
@@ -145,7 +180,7 @@ label {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
-    gap: 3px;
+    gap: 2px;
     background-color: cornflowerblue;
     width: 600px;
     height: 600px;
@@ -164,7 +199,7 @@ label {
 }
  
 .cell:hover {
-    scale: 1.05;
+    scale: 1.02;
 }
 
 .cell-occupied {
@@ -194,6 +229,10 @@ label {
 
 .flex-wrapper {
     display: flex;
+}
+
+.flex-center {
+    justify-content: center;
 }
 
 .name-heading {
