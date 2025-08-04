@@ -92,11 +92,12 @@ describe("Gameboard", () => {
     test("receiveAttack(): sink a ship", () => {
         const gameboard = new Gameboard();
         const ship = gameboard.placeShip(2, [0, 0]);
+        const shipUUID = ship.uuid;
         
         let result = gameboard.receiveAttack([0, 0]);
-        expect(result).toBe(1);
+        expect(result).toEqual({ outcome: 1, uuid: shipUUID });
         result = gameboard.receiveAttack([0, 1]);
-        expect(result).toBe(2);
+        expect(result).toEqual({ outcome: 2, uuid: shipUUID });
         
         expect(ship.hits).toBe(2);
         expect(ship.sunk).toBe(true);
@@ -118,7 +119,7 @@ describe("Gameboard", () => {
         const attackResult1 = gameboard.receiveAttack([9, 9]);
         const attackResult2 = gameboard.receiveAttack([9, 9]);
         
-        expect(attackResult1).toBe(0);
+        expect(attackResult1).toEqual({ outcome: 0 });
         expect(attackResult2).toBeNull();
     });
 });

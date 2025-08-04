@@ -45,8 +45,8 @@ function createStatusIndicator() {
 
 function takeTurnHandler(e) {
     const cell = e.currentTarget;
-    const row = cell.dataset.row;
-    const col = cell.dataset.col;
+    const row = Number(cell.dataset.row);
+    const col = Number(cell.dataset.col);
     
     const turnResult = currentGame.takeTurn([row, col]);
     
@@ -61,8 +61,6 @@ function takeTurnHandler(e) {
         changeTurn();
     else
         showWinnerVisualUI();
-
-    // remove this event handler from the cell?
 }
 
 async function changeTurn() {
@@ -75,7 +73,7 @@ async function changeTurn() {
         await wait(1000);
 
         // Get computer's next move > dispatch click event that board cell > triggers takeTurn()
-        const [row, col] = currentGame.player2.generateNextMove();
+        const [row, col] = currentGame.player2.generateAIMove();
         const playerBoardDiv = document.querySelector(".player-board");
         const chosenCell = playerBoardDiv.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
         chosenCell.dispatchEvent(new MouseEvent("click"));

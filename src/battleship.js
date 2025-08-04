@@ -1,4 +1,5 @@
 class Ship {
+    uuid;
     name;
     length;
     hits = 0;
@@ -10,6 +11,7 @@ class Ship {
 
         this.length = length;
         this.name = name;
+        this.uuid = crypto.randomUUID();
     }
 
     hit() {
@@ -83,7 +85,8 @@ class Gameboard {
         return ship;
     }
 
-    // 0 if missed, 1 if hit, 2 if ship sunk from hit, null if invalid
+    // returns { uuid, outcome }
+    // where outcome = 0 if missed, 1 if hit, 2 if ship sunk from hit, null if invalid
     receiveAttack([row, col]) {
         const coorStr = String([row, col]);
         const ship = this.board[coorStr];
@@ -105,11 +108,11 @@ class Gameboard {
                 this.allShipsDestroyed = true;
             
             this.striked.push(coorStr);
-            return ship.sunk ? 2 : 1;
+            return ship.sunk ? { uuid: ship.uuid, outcome: 2 } : { uuid: ship.uuid, outcome: 1 };
         }
         else {
             this.missed.push(coorStr);
-            return 0;
+            return { outcome: 0 };
         }
     }
 }

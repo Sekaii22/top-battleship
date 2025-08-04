@@ -49,7 +49,7 @@ class Game {
         
         // invalid attack
         if (result === null)
-            return result;
+            return null;
 
         this.checkGameOver();
         this.turn += 1;
