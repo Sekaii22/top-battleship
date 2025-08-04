@@ -55,14 +55,6 @@ dialog button {
     margin: 0 10px;
 }
 
-#retry-btn {
-
-}
-
-#exit-btn {
-    
-}
-
 /* start form */
 .start-form {
     background-color: #222;
@@ -174,6 +166,7 @@ label {
     padding: 16px;
     margin-bottom: 50px;
     background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 5px;
 }
 
 .board {
@@ -238,6 +231,14 @@ label {
 .name-heading {
     font-size: 2rem;
     margin-bottom: 10px;
+}
+
+.announce-text {
+    margin-top: 40px;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 16px 26px;
+    min-height: 80px;
+    border-radius: 5px;
 }
 
 

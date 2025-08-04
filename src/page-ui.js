@@ -235,7 +235,7 @@ function createGamePage(game) {
     const gameWrapper = document.createElement("div");
     gameWrapper.classList.add("flex-wrapper", "game-wrapper");
 
-    // Group player name header with the Player's board
+    // group player name header with the Player's board
     const playerBoardWrapper = document.createElement("div");
     const playerNameHeader = document.createElement("h2");
     playerNameHeader.classList.add("name-heading");
@@ -244,7 +244,7 @@ function createGamePage(game) {
     playerBoardWrapper.appendChild(playerNameHeader);
     playerBoardWrapper.appendChild(playerBoardDiv);
 
-    // Group enemy name header with the enemy's board
+    // group enemy name header with the enemy's board
     const enemyBoardWrapper = document.createElement("div");
     const enemyNameHeader = document.createElement("h2");
     enemyNameHeader.classList.add("name-heading");
@@ -253,12 +253,18 @@ function createGamePage(game) {
     enemyBoardWrapper.appendChild(enemyNameHeader);
     enemyBoardWrapper.appendChild(enemyBoardDiv);
 
-    // Put their gameboards side by side
+    // announcement panel
+    const announce = document.createElement("p");
+    announce.classList.add("announce-text");
+    announce.textContent = "Game has started, first turn is yours.";
+
+    // put their gameboards side by side
     gameWrapper.appendChild(playerBoardWrapper);
     gameWrapper.appendChild(enemyBoardWrapper);
 
     page.appendChild(statusIndicator);
     page.appendChild(gameWrapper);
+    page.appendChild(announce);
 
     return page;
 }

@@ -2,6 +2,7 @@ import { wait } from "./misc";
 
 let currentGame;
 
+// game page related functions
 function setCurrentGame(game) {
     currentGame = game;
 }
@@ -22,12 +23,15 @@ function createPlayBoard(board, isPlayer=true) {
 
             cell.classList.add("cell");
 
-            // if (isPlayer && board.board[String([row, col])]) {
-            //     cell.classList.add("cell-occupied");
-            // }
-            if (board.board[String([row, col])]) {
+            // ACTUAL CODE: obstruct enemy's board
+            if (isPlayer && board.board[String([row, col])]) {
                 cell.classList.add("cell-occupied");
             }
+
+            // DEBUG CODE: view enemy's board
+            // if (board.board[String([row, col])]) {
+            //     cell.classList.add("cell-occupied");
+            // }
 
             cell.addEventListener("click", takeTurnHandler);
         }
@@ -37,16 +41,27 @@ function createPlayBoard(board, isPlayer=true) {
 }
 
 function takeTurnHandler(e) {
+    const announce = document.querySelector(".announce-text");
+    const address = (currentGame.whoseTurnIsIt() === 1) ? "You" : "Enemy";
+
     const cell = e.currentTarget;
     const row = Number(cell.dataset.row);
     const col = Number(cell.dataset.col);
     
     const turnResult = currentGame.takeTurn([row, col]);
     
-    if (turnResult === 1 || turnResult === 2)
+    if (turnResult === 1) {
         cell.classList.add("cell-hit", "disable");
-    else if (turnResult === 0) 
+        announce.textContent = `${address} striked a ship!`;
+    }
+    else if (turnResult === 2) {
+        cell.classList.add("cell-hit", "disable");
+        announce.textContent = `${address} have sunk a ship!`;
+    }
+    else if (turnResult === 0) {
         cell.classList.add("cell-missed", "disable");
+        announce.textContent = `${address} missed!`;
+    }
     else
         return;
 
@@ -62,8 +77,8 @@ async function changeTurn() {
     toggleBoardTurnVisualUI(whichPlayer);
 
     if (whichPlayer === 2) {
-        // wait 1 seconds before letting computer move to simulate "thinking"
-        await wait(1000);
+        // wait a few seconds before letting computer move to simulate "thinking"
+        await wait(1500);
 
         // Get computer's next move > dispatch click event that board cell > triggers takeTurn()
         const [row, col] = currentGame.player2.generateAIMove();
@@ -107,6 +122,7 @@ function showWinnerVisualUI() {
     dialog.showModal();
 }
 
+// start page related functions
 function createEndDialog() {
     const dialog = document.querySelector("dialog");
     const dialogArea = document.createElement("div");
@@ -140,6 +156,7 @@ function createEndDialog() {
     return dialogArea;
 }
 
+// ship placement page related functions
 function createPlacementBoard() {
     const boardDiv = document.createElement("div");
     boardDiv.classList.add("board", "placement-board");
